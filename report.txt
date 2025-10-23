@@ -1,0 +1,63 @@
+SUBMARINE CONTROL SYSTEM DEVELOPMENT REPORT
+
+PROBLEM STATEMENT
+
+This report documents the development of a closed-loop control system for an 
+Unmanned Underwater Vehicle (UUV) navigating through a cave environment. The 
+primary challenges addressed were: (a) implementing robust data handling for 
+mission profiles stored in CSV format, and (b) designing and implementing a 
+Proportional-Derivative (PD) feedback controller to track reference trajectories 
+while maintaining safe operation within cave boundaries.
+
+CODEBASE MODIFICATIONS
+
+Mission Data Handling
+The Mission class was extended with a new class method from_csv() to enable 
+loading of mission data from CSV files. This method utilises pandas for efficient 
+data extraction and returns a complete Mission instance containing reference 
+trajectories and cave boundary data.
+
+Controller Implementation
+A new control.py module was created containing the PDController class. This class 
+implements the control law:
+
+u[t] = Kp * e[t] + KD * (e[t] - e[t-1])
+
+where e[t] = r[t] - y[t] represents the tracking error.
+
+Simulation Integration
+The ClosedLoop.simulate() method was completed to integrate the controller with 
+the submarine dynamics. The method now properly computes control actions, applies 
+disturbances, and tracks system trajectories over the mission duration.
+
+DESIGN JUSTIFICATION
+
+Class Method for Data Loading
+The @classmethod decorator was chosen for from_csv() to provide a clean, 
+single-step object creation API. This follows Python conventions for alternative 
+constructors and maintains consistency with the existing random_mission() method.
+
+Separate Controller Module
+The controller was implemented as a separate class in its own module to maintain 
+clear separation of concerns. This design allows for easy testing, modification, 
+and potential future extensions (e.g., PID controllers, adaptive control).
+
+State Management
+The controller includes explicit state management with reset() functionality to 
+ensure proper initialisation between simulation runs. This prevents state 
+contamination and ensures reproducible results.
+
+PERFORMANCE RESULTS
+
+Testing across disturbance variance levels (0.1, 0.5, 1.0) demonstrated robust 
+performance. The controller successfully tracks sinusoidal reference trajectories 
+while maintaining safe operation within cave boundaries, even under significant 
+disturbances.
+
+FUTURE IMPROVEMENTS
+
+Potential enhancements include: (a) implementation of adaptive gain scheduling 
+based on operating conditions, (b) integration of obstacle avoidance algorithms 
+for complex cave geometries, (c) development of model predictive control for 
+improved performance under constraints, and (d) implementation of fault detection 
+and recovery mechanisms for enhanced reliability.
